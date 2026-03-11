@@ -1,0 +1,41 @@
+# API
+
+## Endpoints
+
+### Health Check
+
+```http
+GET /api/v1/health
+```
+
+Retourne le statut du backend.
+
+### Users
+
+```http
+POST   /api/v1/users         # Créer un utilisateur
+GET    /api/v1/users         # Lister les utilisateurs
+GET    /api/v1/users/:id     # Récupérer un utilisateur
+PUT    /api/v1/users/:id     # Modifier un utilisateur
+DELETE /api/v1/users/:id     # Supprimer un utilisateur
+```
+
+### Game (à venir)
+
+```http
+POST   /api/v1/game/start    # Démarrer une partie
+WS     /api/v1/game/:id      # WebSocket — canal de jeu
+POST   /api/v1/game/:id/guess  # Soumettre une réponse
+POST   /api/v1/game/:id/abandon # Abandonner la partie
+```
+
+## Format de réponse standard
+
+```json
+{
+  "success": true,
+  "data": { ... },
+  "error": null,
+  "timestamp": "2026-03-11T12:00:00.000Z"
+}
+```

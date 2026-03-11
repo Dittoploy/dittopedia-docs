@@ -1,0 +1,39 @@
+# Architecture
+
+## Monorepo
+
+Le projet est organisé en 5 packages :
+
+```
+dittopedia/
+├── dittopedia-back/      # API NestJS
+├── dittopedia-front/     # Application Next.js
+├── dittopedia-docs/      # Documentation Nextra (ce site)
+├── dittopedia-shared/    # Types, enums, utils partagés (@dittopedia/shared)
+└── dittopedia-infra/     # Docker Compose, Terraform, Ansible
+```
+
+## Schéma applicatif
+
+```
+┌──────────┐     ┌──────────┐     ┌──────────────┐
+│  Client  │────▶│  Next.js │────▶│   NestJS     │
+│ (Browser)│     │  (Front) │     │   (Back)     │
+└──────────┘     └──────────┘     └──────┬───────┘
+                                         │
+                              ┌──────────┼──────────┐
+                              │          │          │
+                         ┌────┴───┐ ┌────┴───┐ ┌───┴────┐
+                         │PostgreSQL│ │ Redis  │ │PokéAPI │
+                         └─────────┘ └────────┘ └────────┘
+```
+
+## Shared Library
+
+Le package `@dittopedia/shared` est publié sur npm et consommé par le front et le back.
+Il contient :
+
+- **Types** : `IUserDTO`, `IApiResponse`
+- **Enums** : `EBackendStatus`
+- **Utils** : `formatDate()`
+- **Presets** : ESLint et Prettier partagés

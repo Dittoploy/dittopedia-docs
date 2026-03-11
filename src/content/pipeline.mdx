@@ -1,0 +1,60 @@
+# Pipeline CI/CD
+
+## Vue d'ensemble
+
+```
+Code Push → Jenkins → Lint → Tests → SonarQube → Docker Build → Trivy → ECR → Deploy
+```
+
+## Étapes du pipeline
+
+### 1. Lint & Format
+
+```bash
+bun run lint
+bun run format --check
+```
+
+### 2. Tests
+
+- **Unitaires** : Jest (`bun run test`)
+- **Intégration** : Jest avec TestContainers
+- **E2E** : Supertest (`bun run test:e2e`)
+
+### 3. Analyse SonarQube
+
+Scan statique du code pour détecter :
+- Bugs potentiels
+- Code smells
+- Vulnérabilités de sécurité
+- Couverture de code
+
+### 4. Build Docker
+
+```bash
+docker build -t dittopedia-back .
+docker build -t dittopedia-front .
+```
+
+### 5. Scan de vulnérabilité (Trivy)
+
+```bash
+trivy image dittopedia-back:latest
+trivy image dittopedia-front:latest
+```
+
+### 6. Push vers ECR
+
+```bash
+docker push <ECR_URL>/dittopedia-back:latest
+docker push <ECR_URL>/dittopedia-front:latest
+```
+
+### 7. Déploiement (Rolling Update)
+
+Mise à jour de l'ASG via nouvelle version du Launch Template.
+
+## Jenkins
+
+- **Master** : Instance EC2 `t3.medium` dédiée
+- **Agents** : EC2 Fleet (Spot Instances) pour le scaling

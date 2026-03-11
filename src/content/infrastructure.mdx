@@ -1,0 +1,31 @@
+# Infrastructure
+
+## Docker Compose (dev local)
+
+L'environnement de développement est entièrement conteneurisé :
+
+| Service | Port | Description |
+|---------|------|-------------|
+| `back` | 3000 | API NestJS |
+| `front` | 3001 | Application Next.js |
+| `docs` | 3002 | Documentation Nextra |
+| `postgres` | 5432 | Base de données PostgreSQL 17 |
+| `redis` | 6379 | Cache et sessions WebSocket |
+| `adminer` | 8080 | Interface web d'administration BDD |
+| `sonarqube` | 9000 | Analyse statique du code |
+
+## Lancer l'environnement
+
+```bash
+cd dittopedia-infra
+docker compose up -d
+```
+
+## AWS (production)
+
+- **VPC** avec sous-réseaux publics/privés sur 2 AZ
+- **ALB** (Application Load Balancer) pour le routing et le SSL
+- **ASG** (Auto Scaling Group) pour le scaling horizontal
+- **RDS PostgreSQL** Multi-AZ
+- **ElastiCache Redis** pour les sessions WebSocket
+- **ECR** pour le stockage des images Docker
