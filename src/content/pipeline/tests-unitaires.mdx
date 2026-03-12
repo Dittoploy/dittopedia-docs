@@ -1,0 +1,54 @@
+# Tests unitaires
+
+## Stratégie de test
+
+Les tests unitaires couvrent la logique métier isolée de chaque module.
+
+## Outils
+
+- **Jest** — Framework de test
+- **ts-jest** — Support TypeScript natif
+
+## Lancer les tests
+
+```bash
+bun run test
+```
+
+## Lancer les tests avec couverture
+
+```bash
+bun run test:cov
+```
+
+## Convention de nommage
+
+Les fichiers de test suivent la convention `*.spec.ts` et sont colocalisés avec
+le fichier source qu'ils testent :
+
+```
+src/
+  users/
+    users.service.ts
+    users.service.spec.ts
+```
+
+## Exemple
+
+```typescript
+describe('UsersService', () => {
+  let service: UsersService;
+
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [UsersService],
+    }).compile();
+
+    service = module.get<UsersService>(UsersService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
+```

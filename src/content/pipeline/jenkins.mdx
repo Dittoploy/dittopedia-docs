@@ -1,0 +1,50 @@
+# Jenkins
+
+## Architecture
+
+Jenkins orchestre l'intégralité du pipeline CI/CD sur une instance EC2 avec des
+agents dynamiques via **EC2 Fleet**.
+
+## Jenkinsfile
+
+Le pipeline est déclaré dans un `Jenkinsfile` à la racine de chaque dépôt :
+
+```groovy
+pipeline {
+    agent { label 'ec2-fleet' }
+
+    stages {
+        stage('Install') {
+            steps {
+                sh 'bun install --frozen-lockfile'
+            }
+        }
+        stage('Lint') {
+            steps {
+                sh 'bun run lint'
+            }
+        }
+        stage('Test') {
+            steps {
+                sh 'bun run test'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'bun run build'
+            }
+        }
+        stage('Docker') {
+            steps {
+                sh 'docker build -t dittopedia-back .'
+            }
+        }
+    }
+}
+```
+
+## Triggers
+
+- **Push** sur `main` → build + deploy en production
+- **Pull Request** → build + tests uniquement
+- **Cron** — Scan de sécurité quotidien

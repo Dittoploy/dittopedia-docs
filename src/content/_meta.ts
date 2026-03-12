@@ -3,8 +3,20 @@ export default {
     title: 'Accueil',
     type: 'page',
   },
-  architecture: 'Architecture',
-  api: 'API',
-  infrastructure: 'Infrastructure',
-  pipeline: 'Pipeline CI/CD',
+  architecture: {
+    title: 'Architecture',
+    type: 'page',
+  },
+  api: {
+    title: 'API',
+    type: 'page',
+  },
+  infrastructure: {
+    title: 'Infrastructure',
+    type: 'page',
+  },
+  pipeline: {
+    title: 'Pipeline CI/CD',
+    type: 'page',
+  },
 };

@@ -1,0 +1,40 @@
+# SonarQube
+
+## Rôle
+
+SonarQube effectue une analyse statique du code pour détecter :
+
+- Bugs potentiels
+- Code smells
+- Vulnérabilités de sécurité
+- Couverture de code
+
+## Intégration au pipeline
+
+L'analyse s'exécute après les tests pour inclure les rapports de couverture :
+
+```groovy
+stage('SonarQube') {
+    steps {
+        withSonarQubeEnv('sonar') {
+            sh 'sonar-scanner'
+        }
+    }
+}
+stage('Quality Gate') {
+    steps {
+        waitForQualityGate abortPipeline: true
+    }
+}
+```
+
+## Quality Gate
+
+Le pipeline échoue automatiquement si le Quality Gate n'est pas satisfait :
+
+| Métrique | Seuil |
+|----------|-------|
+| Couverture | ≥ 80 % |
+| Duplications | ≤ 3 % |
+| Bugs | 0 |
+| Vulnérabilités | 0 |
