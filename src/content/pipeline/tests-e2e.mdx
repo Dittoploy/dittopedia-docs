@@ -1,0 +1,157 @@
+# Tests E2E — Playwright
+
+## Présentation
+
+Les tests end-to-end (E2E) vérifient le comportement de l'application Dittopedia
+du point de vue de l'utilisateur final. Ils sont exécutés via
+[Playwright](https://playwright.dev/) dans un repository dédié : `dittopedia-playwright`.
+
+## Prérequis
+
+- **Node.js** ≥ 20
+- Le front-end (`dittopedia-front`) accessible sur `http://localhost:3001`
+- Le back-end (`dittopedia-back`) accessible sur `http://localhost:3000`
+
+> Les deux services peuvent être démarrés via `docker compose up` depuis `dittopedia-infra/`.
+
+## Installation
+
+```bash
+cd dittopedia-playwright
+
+# Installer les dépendances
+npm install
+
+# Installer les navigateurs Playwright
+npx playwright install --with-deps
+```
+
+## Lancer les tests
+
+```bash
+# Tous les tests (headless)
+npm test
+
+# Mode visible (headed)
+npm run test:headed
+
+# Interface graphique Playwright
+npm run test:ui
+
+# Mode debug (step-by-step)
+npm run test:debug
+
+# Ouvrir le dernier rapport HTML
+npm run test:report
+```
+
+## Navigateurs testés
+
+Les tests sont exécutés sur **5 profils** de navigateurs :
+
+| Projet          | Navigateur            |
+| --------------- | --------------------- |
+| `chromium`      | Google Chrome         |
+| `firefox`       | Mozilla Firefox       |
+| `webkit`        | Safari                |
+| `mobile-chrome` | Chrome mobile (Pixel 5) |
+| `mobile-safari` | Safari mobile (iPhone 12) |
+
+## Variables d'environnement
+
+| Variable   | Défaut                  | Description             |
+| ---------- | ----------------------- | ----------------------- |
+| `BASE_URL` | `http://localhost:3001` | URL du front-end        |
+| `API_URL`  | `http://localhost:3000` | URL de l'API back-end   |
+| `CI`       | —                       | Activé dans les pipelines CI |
+
+Copier `.env.example` en `.env` pour surcharger les valeurs localement.
+
+## Architecture du projet
+
+```
+dittopedia-playwright/
+├── fixtures/              # Fixtures Playwright custom
+│   └── base.fixture.ts
+├── helpers/               # Utilitaires partagés
+│   └── env.ts
+├── pages/                 # Page Object Models
+│   └── home.page.ts
+├── tests/
+│   ├── api/               # Tests API (health check)
+│   ├── home/              # Tests page d'accueil
+│   └── navigation/        # Tests navigation / routing
+├── playwright.config.ts
+└── package.json
+```
+
+### Page Object Model
+
+Les Page Objects encapsulent les sélecteurs et interactions d'une page dans une
+classe dédiée. Cela facilite la maintenance et la lisibilité des tests.
+
+```typescript
+// pages/home.page.ts
+export class HomePage {
+  readonly page: Page;
+  readonly heading: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.heading = page.getByRole('heading', { name: 'Dittopedia' });
+  }
+
+  async goto() {
+    await this.page.goto('/');
+  }
+}
+```
+
+### Fixtures
+
+Les fixtures Playwright injectent automatiquement les Page Objects dans les tests :
+
+```typescript
+// fixtures/base.fixture.ts
+export const test = base.extend<DittopediaFixtures>({
+  homePage: async ({ page }, use) => {
+    const homePage = new HomePage(page);
+    await use(homePage);
+  },
+});
+```
+
+### Écrire un test
+
+```typescript
+import { test, expect } from '../../fixtures/base.fixture';
+
+test.describe('Home page', () => {
+  test('should display the heading', async ({ homePage }) => {
+    await homePage.goto();
+    await expect(homePage.heading).toBeVisible();
+  });
+});
+```
+
+## Comportement en CI
+
+Lorsque la variable `CI` est définie, la configuration adapte automatiquement :
+
+- **Retries** : 2 tentatives en cas d'échec
+- **Workers** : 1 seul worker (exécution séquentielle)
+- **Reporter** : `blob` (pour agrégation dans le pipeline)
+- **`forbidOnly`** : empêche les `.only` d'être commités
+
+## Lint & format
+
+```bash
+# Vérifier le lint
+npm run lint
+
+# Corriger automatiquement
+npm run lint:fix
+
+# Formater le code
+npm run format
+```
