@@ -8,7 +8,7 @@ du point de vue de l'utilisateur final. Ils sont exécutés via
 
 ## Prérequis
 
-- **Node.js** ≥ 20
+- **Bun** ≥ 1.0
 - Le front-end (`dittopedia-front`) accessible sur `http://localhost:3001`
 - Le back-end (`dittopedia-back`) accessible sur `http://localhost:3000`
 
@@ -20,29 +20,29 @@ du point de vue de l'utilisateur final. Ils sont exécutés via
 cd dittopedia-playwright
 
 # Installer les dépendances
-npm install
+bun install
 
 # Installer les navigateurs Playwright
-npx playwright install --with-deps
+bunx playwright install --with-deps
 ```
 
 ## Lancer les tests
 
 ```bash
 # Tous les tests (headless)
-npm test
+bun test
 
 # Mode visible (headed)
-npm run test:headed
+bun run test:headed
 
 # Interface graphique Playwright
-npm run test:ui
+bun run test:ui
 
 # Mode debug (step-by-step)
-npm run test:debug
+bun run test:debug
 
 # Ouvrir le dernier rapport HTML
-npm run test:report
+bun run test:report
 ```
 
 ## Navigateurs testés
@@ -147,11 +147,11 @@ Lorsque la variable `CI` est définie, la configuration adapte automatiquement :
 
 ```bash
 # Vérifier le lint
-npm run lint
+bun run lint
 
 # Corriger automatiquement
-npm run lint:fix
+bun run lint:fix
 
 # Formater le code
-npm run format
+bun run format
 ```
