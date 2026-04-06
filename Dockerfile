@@ -1,3 +1,19 @@
+# ---- Development ----
+FROM oven/bun:1 AS dev
+WORKDIR /app
+
+COPY package.json bun.lock* bun.lockb* ./
+RUN bun install --frozen-lockfile --no-save
+
+COPY . .
+
+ENV HOSTNAME="0.0.0.0"
+ENV PORT=3000
+
+EXPOSE 3000
+
+CMD ["bun", "run", "dev", "--", "-H", "0.0.0.0", "-p", "3000"]
+
 # ---- Dependencies ----
 FROM oven/bun:1 AS deps
 WORKDIR /app
