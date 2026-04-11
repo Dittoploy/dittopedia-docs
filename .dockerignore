@@ -1,8 +1,9 @@
 # Dependencies
 node_modules
+!.next/standalone/node_modules
+!.next/standalone/node_modules/**
 
 # Next.js build output
-.next
 out
 
 # Local tooling caches
