@@ -331,4 +331,25 @@ EOF
       }
     }
   }
+
+  post {
+    always {
+      // Nettoyage des fichiers temporaires
+      sh 'rm -f .ssh_ingress_cidr 2>/dev/null || true'
+      
+      // Déconnexion de Docker Hub pour la sécurité
+      sh 'docker logout 2>/dev/null || true'
+      
+      // NETTOYAGE DISQUE : Supprime les images intermédiaires (dangling) 
+      // qui n'ont plus de tag (souvent créées par le build précédent)
+      sh 'docker image prune -f'
+    }
+    
+    failure {
+      // Optionnel : En cas d'échec, on peut faire un nettoyage plus profond
+      // pour s'assurer que le prochain build démarre sur une base saine
+      echo "Build failed, performing deep cleanup..."
+      sh 'docker system prune -f --volumes'
+    }
+  }
 }
